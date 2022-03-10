@@ -60,13 +60,10 @@ func (p *ProxyClient) sign(req *http.Request, service *endpoints.ResolvedEndpoin
 	switch service.SigningMethod {
 	case "v4", "s3v4":
 		_, err = p.Signer.Sign(req, body, service.SigningName, service.SigningRegion, time.Now())
-		break
 	case "s3":
 		_, err = p.Signer.Presign(req, body, service.SigningName, service.SigningRegion, time.Duration(time.Hour), time.Now())
-		break
 	default:
 		err = fmt.Errorf("unable to sign with specified signing method %s for service %s", service.SigningMethod, service.SigningName)
-		break
 	}
 
 	if err == nil {

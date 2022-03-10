@@ -17,6 +17,7 @@ package main
 
 import (
 	"crypto/tls"
+	"fmt"
 	"net/http"
 	"os"
 	"strconv"
@@ -45,6 +46,9 @@ var (
 	hostOverride           = kingpin.Flag("host", "Host to proxy to").String()
 	regionOverride         = kingpin.Flag("region", "AWS region to sign for").String()
 	disableSSLVerification = kingpin.Flag("no-verify-ssl", "Disable peer SSL certificate validation").Bool()
+	version                = kingpin.Flag("version", "Display version").Bool()
+
+	ReleaseVer, ReleaseDate, GitCommit = "DEV", "DEV", "DEV"
 )
 
 type awsLoggerAdapter struct {
@@ -57,6 +61,11 @@ func (awsLoggerAdapter) Log(args ...interface{}) {
 
 func main() {
 	kingpin.Parse()
+
+	if *version {
+		fmt.Println(ReleaseVer, ReleaseDate, GitCommit)
+		return
+	}
 
 	log.SetLevel(log.InfoLevel)
 	if *debug {

@@ -29,7 +29,7 @@ import (
 type mockHTTPClient struct {
 	Client
 	Request *http.Request
-	Fail bool
+	Fail    bool
 }
 
 func (m *mockHTTPClient) Do(req *http.Request) (*http.Response, error) {
@@ -54,9 +54,9 @@ func (m *mockProvider) Retrieve() (credentials.Value, error) {
 
 func TestProxyClient_Do(t *testing.T) {
 	type want struct {
-		resp *http.Response
+		resp    *http.Response
 		request *http.Request
-		err  error
+		err     error
 	}
 
 	tests := []struct {
@@ -90,8 +90,7 @@ func TestProxyClient_Do(t *testing.T) {
 				Body:   nil,
 			},
 			proxyClient: &ProxyClient{
-				Signer: v4.NewSigner(credentials.NewCredentials(&mockProvider{
-				})),
+				Signer: v4.NewSigner(credentials.NewCredentials(&mockProvider{})),
 				Client: &mockHTTPClient{},
 			},
 			want: &want{
@@ -103,16 +102,15 @@ func TestProxyClient_Do(t *testing.T) {
 			name: "should use SignNameOverride and RegionOverride if provided",
 			request: &http.Request{
 				Method: "GET",
-				URL:	&url.URL{},
-				Host:	"badservice.host",
-				Body:	nil,
+				URL:    &url.URL{},
+				Host:   "badservice.host",
+				Body:   nil,
 			},
 			proxyClient: &ProxyClient{
-				Signer: v4.NewSigner(credentials.NewCredentials(&mockProvider{
-				})),
-				Client: &mockHTTPClient{},
+				Signer:              v4.NewSigner(credentials.NewCredentials(&mockProvider{})),
+				Client:              &mockHTTPClient{},
 				SigningNameOverride: "ec2",
-				RegionOverride: "us-west-2",
+				RegionOverride:      "us-west-2",
 			},
 			want: &want{
 				resp: &http.Response{},
@@ -126,22 +124,21 @@ func TestProxyClient_Do(t *testing.T) {
 			name: "should use HostOverride if provided",
 			request: &http.Request{
 				Method: "GET",
-				URL:	&url.URL{},
-				Host:	"badservice.host",
-				Body:	nil,
+				URL:    &url.URL{},
+				Host:   "badservice.host",
+				Body:   nil,
 			},
 			proxyClient: &ProxyClient{
-				Signer: v4.NewSigner(credentials.NewCredentials(&mockProvider{
-				})),
-				Client: &mockHTTPClient{},
+				Signer:              v4.NewSigner(credentials.NewCredentials(&mockProvider{})),
+				Client:              &mockHTTPClient{},
 				SigningNameOverride: "ec2",
-				RegionOverride: "us-west-2",
-				HostOverride: "host.override",
+				RegionOverride:      "us-west-2",
+				HostOverride:        "host.override",
 			},
 			want: &want{
-				resp: &http.Response{},
+				resp:    &http.Response{},
 				request: &http.Request{Host: "host.override"},
-				err:  nil,
+				err:     nil,
 			},
 		},
 		{
@@ -178,9 +175,9 @@ func TestProxyClient_Do(t *testing.T) {
 				Client: &mockHTTPClient{},
 			},
 			want: &want{
-				resp: nil,
+				resp:    nil,
 				request: nil,
-				err:  fmt.Errorf(`mockProvider.Retrieve failed`),
+				err:     fmt.Errorf(`mockProvider.Retrieve failed`),
 			},
 		},
 		{
@@ -247,7 +244,7 @@ func TestProxyClient_Do(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			resp, err :=
-			tt.proxyClient.Do(tt.request)
+				tt.proxyClient.Do(tt.request)
 
 			assert.Equal(t, tt.want.resp, resp)
 			assert.Equal(t, tt.want.err, err)
